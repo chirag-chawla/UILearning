@@ -2,16 +2,24 @@
 import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { addTodo, toggleTodo } from '../redux/actions';
+import '../App.css'; // Import the CSS file
 
 const App = () => {
-  const [inputText, setInputText] = useState('');
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [dueDate, setDueDate] = useState('');
+  const [priority, setPriority] = useState('low');
+
   const todos = useSelector((state) => state.todos);
   const dispatch = useDispatch();
 
   const handleAddTodo = () => {
-    if (inputText.trim() !== '') {
-      dispatch(addTodo(inputText));
-      setInputText('');
+    if (title.trim() !== '') {
+      dispatch(addTodo(title, description, dueDate, priority));
+      setTitle('');
+      setDescription('');
+      setDueDate('');
+      setPriority('low');
     }
   };
 
@@ -20,22 +28,43 @@ const App = () => {
   };
 
   return (
-    <div>
+    <div className="container">
       <h1>Todo App</h1>
+      <label>Title:</label>
       <input
         type="text"
-        value={inputText}
-        onChange={(e) => setInputText(e.target.value)}
+        value={title}
+        onChange={(e) => setTitle(e.target.value)}
       />
+      <label>Description:</label>
+      <input
+        type="text"
+        value={description}
+        onChange={(e) => setDescription(e.target.value)}
+      />
+      <label>Due Date:</label>
+      <input
+        type="date"
+        value={dueDate}
+        onChange={(e) => setDueDate(e.target.value)}
+      />
+      <label>Priority:</label>
+      <select
+        value={priority}
+        onChange={(e) => setPriority(e.target.value)}
+      >
+        <option value="low">Low</option>
+        <option value="high">High</option>
+      </select>
       <button onClick={handleAddTodo}>Add Todo</button>
       <ul>
         {todos.map((todo) => (
           <li
             key={todo.id}
-            style={{ textDecoration: todo.completed ? 'line-through' : 'none' }}
+            className={todo.completed ? 'completed' : ''}
             onClick={() => handleToggleTodo(todo.id)}
           >
-            {todo.text}
+            <strong>{todo.title}</strong> - {todo.description}, Due: {todo.dueDate.toLocaleDateString()}, Priority: {todo.priority}
           </li>
         ))}
       </ul>
